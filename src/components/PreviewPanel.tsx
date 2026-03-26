@@ -31,17 +31,22 @@ export function PreviewPanel({
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
+  const [scaledWidth, setScaledWidth] = useState(1280);
+  const [scaledHeight, setScaledHeight] = useState(720);
   const [showControls, setShowControls] = useState(false);
 
   useEffect(() => {
     const updateScale = () => {
       if (!containerRef.current) return;
       const container = containerRef.current;
-      const containerWidth = container.clientWidth - 32; // padding
+      const containerWidth = container.clientWidth - 32;
       const containerHeight = container.clientHeight - 32;
       const scaleX = containerWidth / 1280;
       const scaleY = containerHeight / 720;
-      setScale(Math.min(scaleX, scaleY, 1));
+      const s = Math.min(scaleX, scaleY, 1);
+      setScale(s);
+      setScaledWidth(1280 * s);
+      setScaledHeight(720 * s);
     };
 
     updateScale();
@@ -68,19 +73,30 @@ export function PreviewPanel({
       onMouseEnter={() => setShowControls(true)}
       onMouseLeave={() => setShowControls(false)}
     >
+      {/* Outer wrapper sized to scaled dimensions */}
       <div
         style={{
-          width: 1280,
-          height: 720,
-          transform: `scale(${scale})`,
-          transformOrigin: 'center center',
-          borderRadius: 12,
+          width: scaledWidth,
+          height: scaledHeight,
+          position: 'relative',
           overflow: 'hidden',
+          borderRadius: 12,
           boxShadow: '0 4px 24px rgba(0, 0, 0, 0.5)',
-          flexShrink: 0,
         }}
       >
-        <div ref={previewRef} style={{ width: 1280, height: 720 }}>
+        {/* Inner div at native 1280x720, scaled down */}
+        <div
+          ref={previewRef}
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: 1280,
+            height: 720,
+            transform: `scale(${scale})`,
+            transformOrigin: 'top left',
+          }}
+        >
           <ChatSimulator
             theme={theme}
             state={state}
@@ -118,7 +134,7 @@ export function PreviewPanel({
               padding: '2px 6px',
             }}
           >
-            {isPlaying ? '⏸' : '▶'}
+            {isPlaying ? '\u23F8' : '\u25B6'}
           </button>
           <button
             onClick={onRestart}
@@ -131,7 +147,7 @@ export function PreviewPanel({
               padding: '2px 6px',
             }}
           >
-            ↺
+            \u21BA
           </button>
           {/* Progress bar */}
           <div

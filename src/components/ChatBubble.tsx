@@ -37,9 +37,8 @@ export function ChatBubble({ type, content, theme, showCursor = false }: Props) 
 
   const bubbleStyles: React.CSSProperties = {
     maxWidth: '80%',
-    padding: '10px 14px',
-    borderRadius:
-      theme.layout.bubbleStyle === 'rounded' ? 16 : theme.layout.bubbleStyle === 'bordered' ? 8 : 4,
+    padding: '12px 16px',
+    borderRadius: 18,
     backgroundColor: isUser ? theme.colors.userBubble : theme.colors.aiBubble,
     color: isUser ? theme.colors.userText : theme.colors.aiText,
     fontFamily: theme.fonts.chat,
@@ -48,12 +47,8 @@ export function ChatBubble({ type, content, theme, showCursor = false }: Props) 
     wordBreak: 'break-word',
   };
 
-  if (theme.layout.bubbleStyle === 'bordered' && !isUser) {
-    bubbleStyles.borderLeft = `3px solid ${theme.colors.accent}`;
-    bubbleStyles.paddingLeft = 12;
-  }
-
-  if (theme.layout.bubbleStyle === 'minimal' && !isUser) {
+  // AI messages: no bubble background
+  if (!isUser) {
     bubbleStyles.backgroundColor = 'transparent';
     bubbleStyles.padding = '4px 0';
   }
@@ -66,6 +61,7 @@ export function ChatBubble({ type, content, theme, showCursor = false }: Props) 
     alignItems: 'flex-start',
   };
 
+  // Only AI messages get an avatar — user messages never show one
   const avatar = !isUser && theme.layout.showAvatar && (
     <div
       style={{
