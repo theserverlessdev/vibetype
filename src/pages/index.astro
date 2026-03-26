@@ -1,0 +1,9 @@
+---
+import Layout from '../layouts/Layout.astro';
+import App from '../components/App.tsx';
+import '../styles/global.css';
+---
+
+<Layout title="VibeType — AI Chat Simulator & Video Generator">
+  <App client:only="react" />
+</Layout>
